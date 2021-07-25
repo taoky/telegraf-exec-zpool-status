@@ -1,20 +1,21 @@
 package main
 
 import (
-	"code.cloudfoundry.org/bytefmt"
 	"flag"
 	"fmt"
+	"os"
+	"os/exec"
+	"strconv"
+	"strings"
+	"time"
+
+	"code.cloudfoundry.org/bytefmt"
 	"github.com/TobiEiss/go-textfsm/pkg/ast"
 	"github.com/TobiEiss/go-textfsm/pkg/process"
 	"github.com/TobiEiss/go-textfsm/pkg/reader"
 	_ "github.com/influxdata/influxdb1-client"
 	influxdb "github.com/influxdata/influxdb1-client"
 	"go.uber.org/zap"
-	"os"
-	"os/exec"
-	"strconv"
-	"strings"
-	"time"
 )
 
 var statusInt = map[string]int{
@@ -34,7 +35,12 @@ func main() {
 		fmt.Println("{\"op\": \"main\", \"level\": \"fatal\", \"msg\": \"failed to initiate logger\"}")
 		os.Exit(1)
 	}
-	defer logger.Sync()
+	defer func() {
+		err = logger.Sync()
+		if err != nil {
+			os.Exit(5)
+		}
+	}()
 
 	template := flag.String(
 		"template",
