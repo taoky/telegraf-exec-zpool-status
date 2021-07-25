@@ -37,9 +37,9 @@ func main() {
 	}
 	defer func() {
 		err = logger.Sync()
-		if err != nil {
-			os.Exit(5)
-		}
+		// if err != nil {
+		// os.Exit(5)
+		// }
 	}()
 
 	template := flag.String(
