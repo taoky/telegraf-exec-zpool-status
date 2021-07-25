@@ -48,8 +48,12 @@ func main() {
 		"path to the TextFSM template for parsing zpool status -s -p",
 	)
 	flag.Parse()
+	zpool_exec := "zpool"
+	if _, err := os.Stat("/sbin/zpool"); err == nil {
+		zpool_exec = "/sbin/zpool"
+	}
 
-	cmd := exec.Command("zpool", "list", "-H", "-p")
+	cmd := exec.Command(zpool_exec, "list", "-H", "-p")
 	stdout, err := cmd.Output()
 	if err != nil {
 		logger.Error("failed to execute zpool list -H -p",
@@ -63,7 +67,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	cmd = exec.Command("zpool", "status", "-s", "-p")
+	cmd = exec.Command(zpool_exec, "status", "-s", "-p")
 	stdout, err = cmd.Output()
 	if err != nil {
 		logger.Error("failed to execute zpool status -s -p",
